@@ -50,6 +50,9 @@ jobs:
       - name: Vulture dead code
         run: uvx vulture cac scripts --min-confidence 80
 
+      - name: Unused dependency scan
+        run: uvx deptry cac scripts tests --requirements-files cac/requirements.txt --known-first-party cac --package-module-name-map pyyaml=yaml --per-rule-ignores DEP002=pytest-cov
+
       - name: Duplicate code
         run: npx --yes jscpd --config .jscpd.json --noTips
 
