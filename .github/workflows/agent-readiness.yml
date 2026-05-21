@@ -58,4 +58,4 @@ jobs:
         run: npx --yes jscpd --config .jscpd.json --noTips
 
       - name: Validate questions
-        run: python scripts/validate_questions.py
+        run: uv run --no-project --with pyyaml==6.0.3 python scripts/validate_questions.py
