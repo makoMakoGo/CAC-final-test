@@ -56,6 +56,7 @@ def print_rich_help() -> None:
     opts_table.add_row("-f, --force", "Force retry (ignore existing results)")
     opts_table.add_row("--dry-run", "Preview only")
     opts_table.add_row("--json", "Output JSON to stdout")
+    opts_table.add_row("--profile-output", "Write cProfile stats to file")
     opts_table.add_row("-h, --help", "Show this message")
     console.print("\n[bold]Options:[/]")
     console.print(opts_table)
@@ -112,6 +113,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--range", "-r")
     parser.add_argument("--force", "-f", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--profile-output")
     return parser
 
 
@@ -372,6 +374,30 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     try:
+        profile_output = _profile_output_from_argv(argv)
+        if profile_output is not None:
+            return _profiled_run_once(argv, profile_output)
         return run_once(argv)
     except KeyboardInterrupt:
         return 130
+
+
+def _profile_output_from_argv(argv: list[str]) -> Optional[Path]:
+    for index, arg in enumerate(argv):
+        if arg == "--profile-output" and index + 1 < len(argv):
+            return Path(argv[index + 1])
+        if arg.startswith("--profile-output="):
+            return Path(arg.split("=", 1)[1])
+    return None
+
+
+def _profiled_run_once(argv: list[str], output_path: Path) -> int:
+    import cProfile
+
+    profiler = cProfile.Profile()
+    profiler.enable()
+    try:
+        return run_once(argv)
+    finally:
+        profiler.disable()
+        profiler.dump_stats(output_path)

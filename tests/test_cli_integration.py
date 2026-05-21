@@ -44,3 +44,46 @@ question_banks: cac/data/question_banks.yaml
     assert payload["dry_run"] is True
     assert payload["total"] == 1
     assert payload["items"][0]["id"] == "001-chicken-rabbit-cage"
+
+
+def test_cli_profile_output_writes_profile_stats(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    profile_path = tmp_path / "profile.prof"
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        """
+test-model:
+  name: demo
+  provider: custom
+  api_key: test-key
+  base_url: https://example.test
+question_banks: cac/data/question_banks.yaml
+""".lstrip(),
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "cac",
+            "--config",
+            str(config_path),
+            "--scope",
+            "math/base-test",
+            "--range",
+            "001",
+            "--dry-run",
+            "--json",
+            "--profile-output",
+            str(profile_path),
+        ],
+        cwd=repo_root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert json.loads(result.stdout)["ok"] is True
+    assert profile_path.exists()
+    assert profile_path.stat().st_size > 0
