@@ -1,4 +1,5 @@
 """Scope 解析器 - 解析测试范围"""
+
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,6 +11,7 @@ import yaml
 @dataclass
 class Question:
     """题目信息"""
+
     path: Path
     id: str
     number: int
@@ -37,9 +39,7 @@ class ScopeResolver:
         with open(self.banks_config_path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
 
-    def resolve(
-        self, scope_str: str, range_str: Optional[str] = None
-    ) -> List[Question]:
+    def resolve(self, scope_str: str, range_str: Optional[str] = None) -> List[Question]:
         """
         解析 scope 字符串
 

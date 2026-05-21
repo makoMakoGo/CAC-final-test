@@ -1,4 +1,5 @@
 """OpenAI Provider (含 custom 模式)"""
+
 import json
 import sys
 import time
@@ -72,7 +73,11 @@ class OpenAIProvider(BaseProvider):
             url = self.config.base_url
         else:
             base_url = self.config.base_url.rstrip("/")
-            url = base_url if base_url.endswith("/chat/completions") else f"{base_url}/chat/completions"
+            url = (
+                base_url
+                if base_url.endswith("/chat/completions")
+                else f"{base_url}/chat/completions"
+            )
 
         timeout = self.get_param("timeout")
 
@@ -113,7 +118,9 @@ class OpenAIProvider(BaseProvider):
                         content.append(text)
                         if is_tty:
                             elapsed = time.time() - start
-                            sys.stderr.write(f"\r  ⏳ TTFT: {ttft:.2f}s | {elapsed:.1f}s | ~{chunks} chunks")
+                            sys.stderr.write(
+                                f"\r  ⏳ TTFT: {ttft:.2f}s | {elapsed:.1f}s | ~{chunks} chunks"
+                            )
                             sys.stderr.flush()
                 except json.JSONDecodeError:
                     continue

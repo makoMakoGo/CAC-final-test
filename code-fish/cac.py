@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """CAC Benchmark Test Runner - LLM/Agent 能力评测工具"""
+
 import json
 import argparse
 import sys
@@ -29,13 +30,15 @@ def print_rich_help():
 
     # 标题
     console.print()
-    console.print(Panel(
-        "[bold cyan]CAC Benchmark[/] [dim]Test Runner[/]\n[dim]LLM/Agent Capability Assessment CLI[/]",
-        border_style="cyan",
-        box=box.ROUNDED,
-        expand=True,
-        padding=(0, 2)
-    ))
+    console.print(
+        Panel(
+            "[bold cyan]CAC Benchmark[/] [dim]Test Runner[/]\n[dim]LLM/Agent Capability Assessment CLI[/]",
+            border_style="cyan",
+            box=box.ROUNDED,
+            expand=True,
+            padding=(0, 2),
+        )
+    )
 
     # 用法
     console.print("\n[bold]Usage:[/]")
@@ -46,7 +49,9 @@ def print_rich_help():
     args_table = Table(show_header=False, box=box.SIMPLE, padding=(0, 2), show_edge=False)
     args_table.add_column("Arg", style="cyan bold", width=20)
     args_table.add_column("Desc")
-    args_table.add_row("-s, --scope", "Scope: math, code, logic, comp, hallucination or math/base-test")
+    args_table.add_row(
+        "-s, --scope", "Scope: math, code, logic, comp, hallucination or math/base-test"
+    )
     console.print(args_table)
 
     # 可选参数
@@ -346,7 +351,9 @@ def _run_once(argv: list[str]) -> int:
         )
         safe_reporter_call("on_phase_start", Phase.TEST, len(questions), config.test_model.name)
         test_summary = runner.run(questions, concurrency=args.concurrency, reporter=reporter)
-        safe_reporter_call("on_phase_end", Phase.TEST, test_summary.done, test_summary.skipped, test_summary.failed)
+        safe_reporter_call(
+            "on_phase_end", Phase.TEST, test_summary.done, test_summary.skipped, test_summary.failed
+        )
 
     # 6. 执行 judge 模式
     if args.mode in ("judge", "all"):
@@ -359,7 +366,9 @@ def _run_once(argv: list[str]) -> int:
             incremental=not args.force,
         )
         safe_reporter_call("on_phase_start", Phase.JUDGE, len(questions), target_model)
-        judge_summary = judge_runner.judge(questions, target_model=target_model, concurrency=args.concurrency, reporter=reporter)
+        judge_summary = judge_runner.judge(
+            questions, target_model=target_model, concurrency=args.concurrency, reporter=reporter
+        )
         safe_reporter_call(
             "on_phase_end",
             Phase.JUDGE,
@@ -399,7 +408,9 @@ def _run_once(argv: list[str]) -> int:
             }
 
         if judge_summary:
-            result["ok"] = result["ok"] and judge_summary.failed == 0 and judge_summary.no_answer == 0
+            result["ok"] = (
+                result["ok"] and judge_summary.failed == 0 and judge_summary.no_answer == 0
+            )
             result["judge"] = {
                 "judge_model": judge_summary.judge_name,
                 "target_model": judge_summary.target_model,

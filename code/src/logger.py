@@ -17,6 +17,7 @@ logger.py — 轻量统一日志模块（单文件）
 
 无第三方强依赖。若安装了 colorama，将自动在 Windows 上启用彩色输出。
 """
+
 from __future__ import annotations
 
 import atexit
@@ -45,11 +46,11 @@ USE_COLOR: bool = True
 # 各等级默认颜色（ANSI 转义码；Windows 推荐安装 colorama 以自动适配）
 # DEBUG=青色, INFO=绿色, WARNING=黄色, ERROR=红色, CRITICAL=白字红底
 LEVEL_COLORS: Dict[str, str] = {
-    "DEBUG": "36",       # Cyan
-    "INFO": "32",        # Green
-    "WARNING": "33",     # Yellow
-    "ERROR": "31",       # Red
-    "CRITICAL": "41;97", # BG Red; FG Bright White
+    "DEBUG": "36",  # Cyan
+    "INFO": "32",  # Green
+    "WARNING": "33",  # Yellow
+    "ERROR": "31",  # Red
+    "CRITICAL": "41;97",  # BG Red; FG Bright White
 }
 # 控制台与文件的格式
 CONSOLE_FORMAT: str = "[%(asctime)s] [%(levelname)s] %(message)s"
@@ -146,9 +147,7 @@ def _configure() -> logging.Logger:
         if ENABLE_CONSOLE:
             ch = logging.StreamHandler(stream=sys.stdout)
             ch.setLevel(_str_to_level(MIN_LEVEL))
-            ch.setFormatter(
-                _ColorFormatter(CONSOLE_FORMAT, DATE_FORMAT, USE_COLOR, LEVEL_COLORS)
-            )
+            ch.setFormatter(_ColorFormatter(CONSOLE_FORMAT, DATE_FORMAT, USE_COLOR, LEVEL_COLORS))
             lg.addHandler(ch)
 
         # 文件
@@ -202,6 +201,7 @@ def reload_config() -> None:
 # 便捷记录方法
 # =============
 
+
 def log(level: str, msg: str, *args: Any, **kwargs: Any) -> None:
     get_logger().log(_str_to_level(level), msg, *args, **kwargs)
 
@@ -240,7 +240,9 @@ def exception(msg: str = "", exc: Optional[BaseException] = None) -> None:
         lg.exception(msg or "Unhandled exception")
 
 
-def log_json(data: Any, level: str = "INFO", *, ensure_ascii: bool = False, indent: Optional[int] = None) -> None:
+def log_json(
+    data: Any, level: str = "INFO", *, ensure_ascii: bool = False, indent: Optional[int] = None
+) -> None:
     """以 JSON 格式输出结构化数据。"""
     try:
         text = json.dumps(data, ensure_ascii=ensure_ascii, indent=indent, default=str)
@@ -287,7 +289,3 @@ def _on_exit() -> None:
         )
     except Exception:
         pass
-
-
-
-

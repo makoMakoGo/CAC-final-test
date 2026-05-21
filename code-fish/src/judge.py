@@ -1,4 +1,5 @@
 """评分执行器"""
+
 from __future__ import annotations
 
 import json
@@ -175,14 +176,16 @@ class JudgeRunner:
                     error=error,
                 )
                 if reporter is not None:
-                    reporter.on_event(Event(
-                        phase=Phase.JUDGE,
-                        event_type=EventType.NO_ANSWER,
-                        index=i,
-                        total=total,
-                        question_id=question.id,
-                        error=error,
-                    ))
+                    reporter.on_event(
+                        Event(
+                            phase=Phase.JUDGE,
+                            event_type=EventType.NO_ANSWER,
+                            index=i,
+                            total=total,
+                            question_id=question.id,
+                            error=error,
+                        )
+                    )
                 continue
 
             # 增量模式：跳过已评分的
@@ -196,30 +199,36 @@ class JudgeRunner:
                     output_file=output_file,
                 )
                 if reporter is not None:
-                    reporter.on_event(Event(
-                        phase=Phase.JUDGE,
-                        event_type=EventType.SKIP,
-                        index=i,
-                        total=total,
-                        question_id=question.id,
-                        output_file=output_file,
-                    ))
+                    reporter.on_event(
+                        Event(
+                            phase=Phase.JUDGE,
+                            event_type=EventType.SKIP,
+                            index=i,
+                            total=total,
+                            question_id=question.id,
+                            output_file=output_file,
+                        )
+                    )
                 continue
 
             to_judge.append((i, question, answer_file, output_file))
 
-        def judge_one(i: int, question: Question, answer_file: Path, output_file: Path) -> JudgeItemResult:
+        def judge_one(
+            i: int, question: Question, answer_file: Path, output_file: Path
+        ) -> JudgeItemResult:
             started = time.monotonic()
             attempts: Optional[int] = None
             try:
                 if reporter is not None:
-                    reporter.on_event(Event(
-                        phase=Phase.JUDGE,
-                        event_type=EventType.START,
-                        index=i,
-                        total=total,
-                        question_id=question.id,
-                    ))
+                    reporter.on_event(
+                        Event(
+                            phase=Phase.JUDGE,
+                            event_type=EventType.START,
+                            index=i,
+                            total=total,
+                            question_id=question.id,
+                        )
+                    )
 
                 # 读取题目、参考答案、被测回答
                 prompt = (question.path / "prompt.md").read_text(encoding="utf-8")
@@ -232,13 +241,17 @@ class JudgeRunner:
                 indicators = scoring_std.get("indicators", ["accuracy"])
                 max_score = scoring_std.get("max_score", 10)
                 if not isinstance(indicators, list):
-                    raise ValueError(f"meta.yaml scoring_std.indicators 必须是列表: {type(indicators).__name__}")
+                    raise ValueError(
+                        f"meta.yaml scoring_std.indicators 必须是列表: {type(indicators).__name__}"
+                    )
 
                 # 检查是否支持 tool calling
                 use_tool = self.provider.supports_tool_calling()
-                
+
                 # 构造评分 prompt 和 tool schema
-                judge_prompt = self._build_judge_prompt(prompt, reference, answer, indicators, max_score, use_tool=use_tool)
+                judge_prompt = self._build_judge_prompt(
+                    prompt, reference, answer, indicators, max_score, use_tool=use_tool
+                )
                 tool_schema = _build_judge_tool_schema(max_score, indicators) if use_tool else None
 
                 # 调用评分模型
@@ -263,7 +276,9 @@ class JudgeRunner:
                 try:
                     max_score_num = float(max_score)
                 except (TypeError, ValueError) as e:
-                    raise ValueError(f"meta.yaml scoring_std.max_score 非数字: {max_score!r}") from e
+                    raise ValueError(
+                        f"meta.yaml scoring_std.max_score 非数字: {max_score!r}"
+                    ) from e
 
                 if total_score < 0 or total_score > max_score_num + 1e-6:
                     raise ValueError(f"评分输出 total_score 越界: {total_score}/{max_score_num}")
@@ -294,17 +309,19 @@ class JudgeRunner:
 
                 elapsed = time.monotonic() - started
                 if reporter is not None:
-                    reporter.on_event(Event(
-                        phase=Phase.JUDGE,
-                        event_type=EventType.DONE,
-                        index=i,
-                        total=total,
-                        question_id=question.id,
-                        elapsed_s=elapsed,
-                        attempt=attempts,
-                        score=total_score,
-                        max_score=max_score_num,
-                    ))
+                    reporter.on_event(
+                        Event(
+                            phase=Phase.JUDGE,
+                            event_type=EventType.DONE,
+                            index=i,
+                            total=total,
+                            question_id=question.id,
+                            elapsed_s=elapsed,
+                            attempt=attempts,
+                            score=total_score,
+                            max_score=max_score_num,
+                        )
+                    )
 
                 return JudgeItemResult(
                     index=i,
@@ -324,16 +341,18 @@ class JudgeRunner:
                 elapsed = time.monotonic() - started
                 error = f"{type(e).__name__}: {e}"
                 if reporter is not None:
-                    reporter.on_event(Event(
-                        phase=Phase.JUDGE,
-                        event_type=EventType.FAIL,
-                        index=i,
-                        total=total,
-                        question_id=question.id,
-                        elapsed_s=elapsed,
-                        attempt=attempts,
-                        error=error,
-                    ))
+                    reporter.on_event(
+                        Event(
+                            phase=Phase.JUDGE,
+                            event_type=EventType.FAIL,
+                            index=i,
+                            total=total,
+                            question_id=question.id,
+                            elapsed_s=elapsed,
+                            attempt=attempts,
+                            error=error,
+                        )
+                    )
                 return JudgeItemResult(
                     index=i,
                     question_id=question.id,
@@ -368,9 +387,7 @@ class JudgeRunner:
 
         # 计算平均分
         scored_items = [
-            item
-            for item in items
-            if item.status == "done" and item.total_score is not None
+            item for item in items if item.status == "done" and item.total_score is not None
         ]
         avg_score = None
         if scored_items:
@@ -398,7 +415,15 @@ class JudgeRunner:
                 return {}
             return meta
 
-    def _build_judge_prompt(self, prompt: str, reference: str, answer: str, indicators: list, max_score: int, use_tool: bool = True) -> str:
+    def _build_judge_prompt(
+        self,
+        prompt: str,
+        reference: str,
+        answer: str,
+        indicators: list,
+        max_score: int,
+        use_tool: bool = True,
+    ) -> str:
         indicators_list = "\n".join(f"- {ind}" for ind in indicators)
         template = JUDGE_PROMPT_TEMPLATE if use_tool else JUDGE_PROMPT_TEMPLATE_LEGACY
         return template.format(
@@ -462,16 +487,18 @@ class JudgeRunner:
                 last_error = e
                 if attempt < max_attempts:
                     if reporter is not None:
-                        reporter.on_event(Event(
-                            phase=Phase.JUDGE,
-                            event_type=EventType.RETRY,
-                            index=index,
-                            total=total,
-                            question_id=question_id,
-                            attempt=attempt,
-                            max_attempts=max_attempts,
-                            error=f"{type(e).__name__}: {e}",
-                        ))
+                        reporter.on_event(
+                            Event(
+                                phase=Phase.JUDGE,
+                                event_type=EventType.RETRY,
+                                index=index,
+                                total=total,
+                                question_id=question_id,
+                                attempt=attempt,
+                                max_attempts=max_attempts,
+                                error=f"{type(e).__name__}: {e}",
+                            )
+                        )
                     time.sleep(delay)
 
         raise RuntimeError(f"请求失败 ({max_attempts} 次尝试): {last_error}")

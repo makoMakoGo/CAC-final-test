@@ -67,19 +67,23 @@ class InteractiveMenu:
 \____/  /_/  |_| \____/
 """
         self.console.print()
-        self.console.print(Panel(
-            Align.center(Text.assemble(
-                Text(logo.strip("\n"), style="bold cyan"),
-                "\n",
-                Text("B E N C H M A R K", style="bold white"),
-                "\n",
-                Text("LLM Capability Assessment CLI", style="dim white")
-            )),
-            box=box.ROUNDED,
-            border_style="blue",
-            expand=True,
-            padding=(1, 2)
-        ))
+        self.console.print(
+            Panel(
+                Align.center(
+                    Text.assemble(
+                        Text(logo.strip("\n"), style="bold cyan"),
+                        "\n",
+                        Text("B E N C H M A R K", style="bold white"),
+                        "\n",
+                        Text("LLM Capability Assessment CLI", style="dim white"),
+                    )
+                ),
+                box=box.ROUNDED,
+                border_style="blue",
+                expand=True,
+                padding=(1, 2),
+            )
+        )
 
     def run(self) -> Optional[InteractiveArgs]:
         try:
@@ -143,7 +147,11 @@ class InteractiveMenu:
     def _input_range(self) -> Optional[str]:
         self.console.print()
         while True:
-            value = Prompt.ask("  [cyan]Range[/] [dim](e.g. 001-005, 003, Enter to skip)[/]", default="", show_default=False).strip()
+            value = Prompt.ask(
+                "  [cyan]Range[/] [dim](e.g. 001-005, 003, Enter to skip)[/]",
+                default="",
+                show_default=False,
+            ).strip()
             if not value:
                 return None
             if self._is_valid_range(value):
@@ -158,11 +166,17 @@ class InteractiveMenu:
                 break
             self.console.print("  [red]Concurrency must be >= 1[/]")
 
-        force = Confirm.ask("  [cyan]Force Retry[/] [dim](Ignore existing results)[/]", default=False)
+        force = Confirm.ask(
+            "  [cyan]Force Retry[/] [dim](Ignore existing results)[/]", default=False
+        )
 
         target: Optional[str] = None
         if mode in ("judge", "all"):
-            value = Prompt.ask("  [cyan]Target Model[/] [dim](Enter to use test-model)[/]", default="", show_default=False).strip()
+            value = Prompt.ask(
+                "  [cyan]Target Model[/] [dim](Enter to use test-model)[/]",
+                default="",
+                show_default=False,
+            ).strip()
             if value:
                 target = value
 
@@ -181,14 +195,16 @@ class InteractiveMenu:
             summary.add_row("Target", args.target or "(Default: test-model)")
 
         self.console.print()
-        self.console.print(Panel(
-            Align.center(summary),
-            title="[bold]Configuration Review[/]",
-            border_style="green",
-            box=box.ROUNDED,
-            expand=True,
-            padding=(0, 2)
-        ))
+        self.console.print(
+            Panel(
+                Align.center(summary),
+                title="[bold]Configuration Review[/]",
+                border_style="green",
+                box=box.ROUNDED,
+                expand=True,
+                padding=(0, 2),
+            )
+        )
 
         self.console.print()
         if Confirm.ask("  [bold green]Ready to start?[/]", default=True):
@@ -197,8 +213,17 @@ class InteractiveMenu:
             return "dry-run"
         return None
 
-    def _show_menu(self, title: str, options: list[tuple[str, str]], allow_back: bool) -> Optional[int]:
-        table = Table(show_header=True, header_style="bold cyan", box=box.SIMPLE, expand=True, show_edge=False, pad_edge=False)
+    def _show_menu(
+        self, title: str, options: list[tuple[str, str]], allow_back: bool
+    ) -> Optional[int]:
+        table = Table(
+            show_header=True,
+            header_style="bold cyan",
+            box=box.SIMPLE,
+            expand=True,
+            show_edge=False,
+            pad_edge=False,
+        )
         table.add_column("#", justify="right", style="yellow", no_wrap=True, width=4)
         table.add_column("Option", style="bold white")
         table.add_column("Description", style="dim")
@@ -212,14 +237,16 @@ class InteractiveMenu:
             table.add_row(str(idx), value, desc)
 
         self.console.print()
-        self.console.print(Panel(
-            table,
-            title=f"[bold cyan]{title}[/]",
-            border_style="blue",
-            box=box.ROUNDED,
-            expand=True,
-            padding=(0, 1)
-        ))
+        self.console.print(
+            Panel(
+                table,
+                title=f"[bold cyan]{title}[/]",
+                border_style="blue",
+                box=box.ROUNDED,
+                expand=True,
+                padding=(0, 1),
+            )
+        )
 
         max_choice = len(options)
         while True:

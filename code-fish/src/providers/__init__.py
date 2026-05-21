@@ -1,4 +1,5 @@
 """Provider 注册与工厂"""
+
 from typing import Type
 
 from ..config import ModelConfig

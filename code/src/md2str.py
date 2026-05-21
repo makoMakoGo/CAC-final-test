@@ -6,14 +6,14 @@ import sys
 def md_to_string(file_path: str, encoding: str = "utf-8") -> str:
     """
     读取指定 Markdown 文件并返回完整字符串内容。
-    
+
     Args:
         file_path: Markdown 文件路径
         encoding: 文件编码，默认 utf-8
-        
+
     Returns:
         str: 文件内容（可能很长）
-        
+
     Raises:
         FileNotFoundError: 当文件不存在时
         IsADirectoryError: 当传入路径为目录时
@@ -24,7 +24,7 @@ def md_to_string(file_path: str, encoding: str = "utf-8") -> str:
         raise FileNotFoundError(f"文件不存在: {file_path}")
     if os.path.isdir(file_path):
         raise IsADirectoryError(f"不是文件而是目录: {file_path}")
-    
+
     with open(file_path, "r", encoding=encoding) as f:
         return f.read()
 
@@ -32,7 +32,7 @@ def md_to_string(file_path: str, encoding: str = "utf-8") -> str:
 def _main(argv: Optional[list] = None) -> int:
     """
     简单的 CLI：传入一个 Markdown 文件路径到标准输出打印其内容。
-    
+
     用法:
         python -m src.md2str <path-to-markdown>
     """
@@ -53,4 +53,3 @@ def _main(argv: Optional[list] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(_main())
-

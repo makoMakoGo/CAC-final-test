@@ -1,4 +1,5 @@
 """Anthropic Provider"""
+
 import requests
 
 from .base import BaseProvider
@@ -82,11 +83,11 @@ class AnthropicProvider(BaseProvider):
         response.raise_for_status()
 
         result = response.json()
-        
+
         # 解析 Anthropic/MiniMax 标准格式
         thinking_content = ""
         text_content = ""
-        
+
         for item in result["content"]:
             if isinstance(item, dict):
                 item_type = item.get("type", "")
@@ -95,7 +96,7 @@ class AnthropicProvider(BaseProvider):
                     thinking_content = item.get("thinking", "")
                 elif item_type == "text":
                     text_content = item.get("text", "")
-        
+
         # 组合输出：thinking 包裹在 <thinking> 标签中
         if thinking_content:
             return f"<thinking>\n{thinking_content}\n</thinking>\n\n{text_content}"

@@ -1,4 +1,5 @@
 """测试执行器"""
+
 from __future__ import annotations
 
 import time
@@ -129,7 +130,7 @@ class TestRunner:
                             elapsed_s=elapsed,
                             attempt=attempts,
                         )
-                )
+                    )
                 return TestItemResult(
                     index=i,
                     question_id=question.id,
@@ -228,7 +229,9 @@ class TestRunner:
                         )
                     time.sleep(delay)
 
-        raise RetryExhaustedError(max_attempts=max_attempts, last_error=last_error or RuntimeError("unknown error"))
+        raise RetryExhaustedError(
+            max_attempts=max_attempts, last_error=last_error or RuntimeError("unknown error")
+        )
 
     def _write_result(self, question_path: Path, response: str):
         """写入测试结果"""

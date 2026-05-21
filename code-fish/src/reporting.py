@@ -182,7 +182,11 @@ class PlainReporter:
             if event.elapsed_s is not None:
                 elapsed = f"{event.elapsed_s:.2f}s"
 
-            if event.phase == Phase.JUDGE and event.score is not None and event.max_score is not None:
+            if (
+                event.phase == Phase.JUDGE
+                and event.score is not None
+                and event.max_score is not None
+            ):
                 score_part = f"{event.score}/{event.max_score}"
                 if elapsed is not None:
                     return f"{prefix} DONE {event.question_id} ({score_part}, {elapsed})"
@@ -258,21 +262,25 @@ class RichReporter:
             self._completed = 0
 
             phase_name = "TEST" if phase == Phase.TEST else "JUDGE"
-            
+
             self._console.print()
-            self._console.print(Panel(
-                f"[bold cyan]{phase_name}[/] [dim]on[/] [bold white]{model_name}[/]",
-                title="[blue]Task Started[/]",
-                border_style="blue",
-                box=box.ROUNDED,
-                expand=True,
-                padding=(0, 2)
-            ))
+            self._console.print(
+                Panel(
+                    f"[bold cyan]{phase_name}[/] [dim]on[/] [bold white]{model_name}[/]",
+                    title="[blue]Task Started[/]",
+                    border_style="blue",
+                    box=box.ROUNDED,
+                    expand=True,
+                    padding=(0, 2),
+                )
+            )
 
             self._progress = Progress(
                 SpinnerColumn(style="cyan"),
                 TextColumn("[bold blue]{task.description}"),
-                BarColumn(bar_width=40, style="dim blue", complete_style="cyan", finished_style="green"),
+                BarColumn(
+                    bar_width=40, style="dim blue", complete_style="cyan", finished_style="green"
+                ),
                 TaskProgressColumn(style="bold white"),
                 TextColumn("[dim]•[/]"),
                 TimeElapsedColumn(),
@@ -319,14 +327,16 @@ class RichReporter:
             table.add_row("Total", f"[bold white]{total}[/]")
 
             self._console.print()
-            self._console.print(Panel(
-                table,
-                title="[bold]Execution Summary[/]",
-                border_style="green" if failed == 0 else "red",
-                box=box.ROUNDED,
-                expand=True,
-                padding=(0, 2)
-            ))
+            self._console.print(
+                Panel(
+                    table,
+                    title="[bold]Execution Summary[/]",
+                    border_style="green" if failed == 0 else "red",
+                    box=box.ROUNDED,
+                    expand=True,
+                    padding=(0, 2),
+                )
+            )
         except Exception as exc:
             _reporter_exception("RichReporter.on_phase_end", exc)
 

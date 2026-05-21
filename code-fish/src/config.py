@@ -1,4 +1,5 @@
 """配置加载模块 - 支持环境变量替换"""
+
 import os
 import re
 from dataclasses import dataclass, field
@@ -11,6 +12,7 @@ import yaml
 @dataclass
 class ModelConfig:
     """模型配置"""
+
     name: str
     provider: str
     api_key: str
@@ -22,6 +24,7 @@ class ModelConfig:
 @dataclass
 class RetryConfig:
     """重试配置"""
+
     max_attempts: int = 3
     delay: float = 10.0
 
@@ -29,6 +32,7 @@ class RetryConfig:
 @dataclass
 class Config:
     """完整配置"""
+
     test_model: ModelConfig
     judge_model: Optional[ModelConfig]
     retry: RetryConfig
@@ -40,7 +44,7 @@ def expand_env_vars(value: str) -> str:
     if not isinstance(value, str):
         return value
 
-    pattern = r'\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)'
+    pattern = r"\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)"
 
     def replace(match):
         var_name = match.group(1) or match.group(2)
@@ -122,4 +126,6 @@ def load_config(config_path: str) -> Config:
 
     question_banks = expand_env_vars(raw.get("question_banks", "data/question_banks.yaml"))
 
-    return Config(test_model=test_model, judge_model=judge_model, retry=retry, question_banks=question_banks)
+    return Config(
+        test_model=test_model, judge_model=judge_model, retry=retry, question_banks=question_banks
+    )

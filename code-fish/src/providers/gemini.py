@@ -1,4 +1,5 @@
 """Google Gemini Provider"""
+
 import requests
 
 from .base import BaseProvider
@@ -40,13 +41,11 @@ class GeminiProvider(BaseProvider):
 
         url = f"{self.config.base_url.rstrip('/')}/v1beta/models/{self.config.model_id}:generateContent"
         timeout = self.get_param("timeout")
-        response = requests.post(
-            url, headers=headers, json=data, params=params, timeout=timeout
-        )
+        response = requests.post(url, headers=headers, json=data, params=params, timeout=timeout)
         response.raise_for_status()
 
         result = response.json()
-        
+
         # 从 candidates 中提取 functionCall
         parts = result["candidates"][0]["content"]["parts"]
         for part in parts:
@@ -79,9 +78,7 @@ class GeminiProvider(BaseProvider):
 
         url = f"{self.config.base_url.rstrip('/')}/v1beta/models/{self.config.model_id}:generateContent"
         timeout = self.get_param("timeout")
-        response = requests.post(
-            url, headers=headers, json=data, params=params, timeout=timeout
-        )
+        response = requests.post(url, headers=headers, json=data, params=params, timeout=timeout)
         response.raise_for_status()
 
         result = response.json()

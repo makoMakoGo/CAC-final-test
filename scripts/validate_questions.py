@@ -41,9 +41,17 @@ VALID_DIFFICULTIES = ["base", "advanced", "final", "final+"]
 
 # 有效的 indicators
 VALID_INDICATORS = [
-    "ans_correct", "code_quality", "efficiency", "robustness",
-    "completeness", "accuracy", "clarity", "depth",
-    "example_quality", "practicality", "correct_max_1",
+    "ans_correct",
+    "code_quality",
+    "efficiency",
+    "robustness",
+    "completeness",
+    "accuracy",
+    "clarity",
+    "depth",
+    "example_quality",
+    "practicality",
+    "correct_max_1",
 ]
 
 
@@ -76,7 +84,7 @@ def validate_meta_yaml(meta_path: Path) -> tuple:
     warnings = []
 
     try:
-        with open(meta_path, 'r', encoding='utf-8') as f:
+        with open(meta_path, "r", encoding="utf-8") as f:
             meta = yaml.safe_load(f)
     except yaml.YAMLError as e:
         errors.append(ValidationError(str(meta_path), f"YAML 解析错误: {e}"))
@@ -114,7 +122,9 @@ def validate_meta_yaml(meta_path: Path) -> tuple:
             elif isinstance(scoring["indicators"], list):
                 for indicator in scoring["indicators"]:
                     if indicator not in VALID_INDICATORS:
-                        warnings.append(ValidationWarning(str(meta_path), f"未知的 indicator: {indicator}"))
+                        warnings.append(
+                            ValidationWarning(str(meta_path), f"未知的 indicator: {indicator}")
+                        )
 
     return errors, warnings
 
@@ -139,13 +149,13 @@ def validate_question_dir(question_path: Path) -> tuple:
     # 检查 prompt.md 不为空
     prompt_path = question_path / "prompt.md"
     if prompt_path.exists():
-        if not prompt_path.read_text(encoding='utf-8').strip():
+        if not prompt_path.read_text(encoding="utf-8").strip():
             errors.append(ValidationError(str(prompt_path), "prompt.md 不能为空"))
 
     # 检查 reference.md 不为空
     reference_path = question_path / "reference.md"
     if reference_path.exists():
-        if not reference_path.read_text(encoding='utf-8').strip():
+        if not reference_path.read_text(encoding="utf-8").strip():
             errors.append(ValidationError(str(reference_path), "reference.md 不能为空"))
 
     return errors, warnings
@@ -204,7 +214,7 @@ def main():
         print(f"\n📁 检查题库: {COMPREHENSIVE_BANK}")
 
         for item in comp_path.iterdir():
-            if item.is_dir() and not item.name.startswith('.'):
+            if item.is_dir() and not item.name.startswith("."):
                 errors, warnings = validate_comprehensive_dir(item)
                 all_errors.extend(errors)
                 all_warnings.extend(warnings)
@@ -212,7 +222,7 @@ def main():
                 print(f"  {'❌' if errors else '✅'} {item.name}")
 
     # 输出结果
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     print(f"验证完成: 共检查 {validated_count} 个题目")
 
     if all_warnings:
