@@ -35,3 +35,14 @@ cc_max = "C"
 show_complexity = true
 average = true
 exclude = ".git,.venv,venv,__pycache__,test-results"
+
+[tool.vulture]
+paths = ["code", "code-fish", "scripts"]
+min_confidence = 80
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "test-results",
+]
