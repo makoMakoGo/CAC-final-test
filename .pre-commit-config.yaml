@@ -16,3 +16,8 @@ repos:
         entry: uv run --no-project --with pyyaml==6.0.3 python scripts/validate_questions.py
         language: system
         pass_filenames: false
+      - id: secret-scan
+        name: Secret scan
+        entry: make secret-scan
+        language: system
+        pass_filenames: false
