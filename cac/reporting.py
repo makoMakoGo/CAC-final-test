@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import json
 import re
 import sys
 import threading
 import traceback
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Protocol, TextIO
@@ -97,6 +98,17 @@ class Reporter(Protocol):
         no_answer: int = 0,
         avg_score: Optional[float] = None,
     ) -> None: ...
+
+
+def event_to_log_record(event: Event) -> dict[str, object]:
+    record = asdict(event)
+    record["phase"] = event.phase.value
+    record["event_type"] = event.event_type.value
+    if event.output_file is not None:
+        record["output_file"] = str(event.output_file)
+    if event.error is not None:
+        record["error"] = scrub_sensitive_text(event.error)
+    return record
 
 
 STYLES = {
@@ -225,6 +237,54 @@ class PlainReporter:
             return f"{prefix} FAIL {event.question_id}: {error}"
 
         return None
+
+
+class JsonLinesReporter:
+    def __init__(self, stream: Optional[TextIO] = None):
+        self._stream = stream or sys.stdout
+        self._lock = threading.Lock()
+
+    def on_event(self, event: Event) -> None:
+        self._write_json({"kind": "event", **event_to_log_record(event)})
+
+    def on_phase_start(self, phase: Phase, total: int, model_name: str) -> None:
+        self._write_json(
+            {
+                "kind": "phase_start",
+                "phase": phase.value,
+                "total": total,
+                "model_name": model_name,
+            }
+        )
+
+    def on_phase_end(
+        self,
+        phase: Phase,
+        done: int,
+        skipped: int,
+        failed: int,
+        no_answer: int = 0,
+        avg_score: Optional[float] = None,
+    ) -> None:
+        self._write_json(
+            {
+                "kind": "phase_end",
+                "phase": phase.value,
+                "done": done,
+                "skipped": skipped,
+                "failed": failed,
+                "no_answer": no_answer,
+                "avg_score": avg_score,
+            }
+        )
+
+    def _write_json(self, payload: dict[str, object]) -> None:
+        with self._lock:
+            self._stream.write(f"{json.dumps(payload, ensure_ascii=False)}\n")
+            try:
+                self._stream.flush()
+            except Exception:
+                pass
 
 
 class RichReporter:
