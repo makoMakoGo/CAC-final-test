@@ -61,19 +61,21 @@ class GeminiProvider(BaseProvider):
 
         headers = {"Content-Type": "application/json"}
 
+        generation_config = {
+            "temperature": self.get_param("temperature"),
+            "maxOutputTokens": self.get_param("max_tokens"),
+        }
+
         data = {
             "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {
-                "temperature": self.get_param("temperature"),
-                "maxOutputTokens": self.get_param("max_tokens"),
-            },
+            "generationConfig": generation_config,
         }
 
         # 可选参数
         if "top_p" in self.config.params:
-            data["generationConfig"]["topP"] = self.config.params["top_p"]
+            generation_config["topP"] = self.config.params["top_p"]
         if "top_k" in self.config.params:
-            data["generationConfig"]["topK"] = self.config.params["top_k"]
+            generation_config["topK"] = self.config.params["top_k"]
 
         url = f"{self.config.base_url.rstrip('/')}/v1beta/models/{self.config.model_id}:generateContent"
         timeout = self.get_param("timeout")

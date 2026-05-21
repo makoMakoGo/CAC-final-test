@@ -1,6 +1,8 @@
 """
 适配器模块 - 提供不同LLM提供商的统一接口
 """
+from typing import Type
+
 from .base import BaseLLMAdaptor
 from .openai import OpenAIAdaptor
 from .anthropic import AnthropicAdaptor
@@ -8,7 +10,7 @@ from .doubao import DoubaoAdaptor
 
 
 # 适配器注册表
-ADAPTOR_REGISTRY = {
+ADAPTOR_REGISTRY: dict[str, Type[BaseLLMAdaptor]] = {
     "openai": OpenAIAdaptor,
     "anthropic": AnthropicAdaptor,
     "doubao": DoubaoAdaptor,

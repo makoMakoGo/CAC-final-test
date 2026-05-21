@@ -4,7 +4,7 @@
 import yaml
 import os
 import re
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from src.adaptors import create_adaptor, BaseLLMAdaptor
 from src import logger as L
 import time
@@ -29,7 +29,7 @@ def build_judge_prompt(
     question: Dict[str, Any],
     model_answer: str,
     prompt_template: str,
-    indicators_map: Dict[str, Dict[str, str]]
+    indicators_map: Dict[str, str]
 ) -> str:
     """
     构建评判提示词
@@ -81,7 +81,10 @@ def build_judge_prompt(
     return prompt
 
 
-def parse_judgment_response(response: str, indicators: List[str] = None) -> Dict[str, Any]:
+def parse_judgment_response(
+    response: str,
+    indicators: Optional[List[str]] = None,
+) -> Dict[str, Any]:
     """
     解析评判响应，提取YAML格式的评分结果，并自动计算 final_score
     

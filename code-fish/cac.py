@@ -287,7 +287,7 @@ def _run_once(argv: list[str]) -> int:
         if args.json:
             repo_root = resolver.base_dir.parent
 
-            def rel(path: Path) -> str:
+            def dry_run_rel(path: Path) -> str:
                 try:
                     return str(path.relative_to(repo_root))
                 except ValueError:
@@ -296,7 +296,7 @@ def _run_once(argv: list[str]) -> int:
             result = make_json_base(args, config)
             result["dry_run"] = True
             result["total"] = len(questions)
-            result["items"] = [{"id": q.id, "path": rel(q.path)} for q in questions]
+            result["items"] = [{"id": q.id, "path": dry_run_rel(q.path)} for q in questions]
             emit_json(result)
             return 0
 
@@ -350,6 +350,8 @@ def _run_once(argv: list[str]) -> int:
 
     # 6. 执行 judge 模式
     if args.mode in ("judge", "all"):
+        if config.judge_model is None:
+            return json_error("judge/all 模式需要配置 judge-model", cfg=config)
         judge_provider = create_provider(config.judge_model)
         judge_runner = JudgeRunner(
             provider=judge_provider,

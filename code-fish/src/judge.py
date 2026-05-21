@@ -367,10 +367,14 @@ class JudgeRunner:
         no_answer = sum(1 for item in items if item.status == "no_answer")
 
         # 计算平均分
-        scored_items = [item for item in items if item.status == "done" and item.total_score is not None]
+        scored_items = [
+            item
+            for item in items
+            if item.status == "done" and item.total_score is not None
+        ]
         avg_score = None
         if scored_items:
-            avg_score = sum(item.total_score for item in scored_items) / len(scored_items)
+            avg_score = sum(item.total_score or 0 for item in scored_items) / len(scored_items)
 
         return JudgeSummary(
             judge_name=self.judge_name,
@@ -446,6 +450,8 @@ class JudgeRunner:
             try:
                 if use_tool:
                     # 使用 tool calling，直接返回 dict
+                    if tool_schema is None:
+                        raise ValueError("tool_schema 不能为空")
                     result = self.provider.chat_with_tool(prompt, tool_schema)
                 else:
                     # 使用传统方式，需要解析 JSON

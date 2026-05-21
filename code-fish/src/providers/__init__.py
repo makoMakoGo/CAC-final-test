@@ -1,4 +1,6 @@
 """Provider 注册与工厂"""
+from typing import Type
+
 from ..config import ModelConfig
 from .base import BaseProvider
 from .openai import OpenAIProvider
@@ -6,7 +8,7 @@ from .anthropic import AnthropicProvider
 from .gemini import GeminiProvider
 
 
-PROVIDER_REGISTRY = {
+PROVIDER_REGISTRY: dict[str, Type[BaseProvider]] = {
     "openai": OpenAIProvider,
     "anthropic": AnthropicProvider,
     "gemini": GeminiProvider,
