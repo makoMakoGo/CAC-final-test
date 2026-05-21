@@ -1,5 +1,4 @@
 """Anthropic Provider"""
-import json
 import requests
 
 from .base import BaseProvider

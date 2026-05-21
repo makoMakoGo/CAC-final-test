@@ -1,6 +1,5 @@
 """Provider 基类"""
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from ..config import ModelConfig
 

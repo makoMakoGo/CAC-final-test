@@ -106,7 +106,7 @@ def parse_judgment_response(response: str, indicators: List[str] = None) -> Dict
     # 第一次尝试
     try:
         content = try_load_yaml(yaml_text)
-    except yaml.YAMLError as e:
+    except yaml.YAMLError:
         # 失败后，对未知转义进行加倍，再次尝试
         fixed_text = sanitize_unknown_backslashes(yaml_text)
         try:

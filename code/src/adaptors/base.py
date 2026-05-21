@@ -2,7 +2,6 @@
 适配器基类 - 定义所有LLM提供商需要实现的接口
 """
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
 
 
 class BaseLLMAdaptor(ABC):

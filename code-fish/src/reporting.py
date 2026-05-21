@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Protocol, TextIO
 
 if TYPE_CHECKING:
+    from rich.console import Console
+    from rich.progress import Progress
     from rich.progress import TaskID
 
 
@@ -260,7 +262,7 @@ class RichReporter:
             self._console.print()
             self._console.print(Panel(
                 f"[bold cyan]{phase_name}[/] [dim]on[/] [bold white]{model_name}[/]",
-                title=f"[blue]Task Started[/]",
+                title="[blue]Task Started[/]",
                 border_style="blue",
                 box=box.ROUNDED,
                 expand=True,
@@ -278,7 +280,7 @@ class RichReporter:
                 transient=False,
             )
             self._progress.start()
-            self._task_id = self._progress.add_task(f"[cyan]Running...[/]", total=total)
+            self._task_id = self._progress.add_task("[cyan]Running...[/]", total=total)
         except Exception as exc:
             _reporter_exception("RichReporter.on_phase_start", exc)
 
