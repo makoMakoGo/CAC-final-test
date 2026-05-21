@@ -51,3 +51,16 @@ exclude = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["code-fish"]
+addopts = [
+    "--cov=code-fish/src",
+    "--cov=code/src",
+    "--cov-report=term-missing",
+    "--cov-fail-under=10",
+]
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "*/__pycache__/*",
+    "*/test-results/*",
+]
