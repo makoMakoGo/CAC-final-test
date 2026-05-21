@@ -1,0 +1,58 @@
+name: Agent Readiness
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  quality:
+    name: Quality gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Validate dependency pins
+        run: |
+          uv pip compile --no-header code-fish/requirements.txt
+          uv pip compile --no-header code/requirements.txt
+
+      - name: Ruff lint
+        run: uvx ruff check code code-fish scripts
+
+      - name: Ruff format
+        run: uvx ruff format --check code code-fish scripts
+
+      - name: Mypy
+        run: |
+          uvx mypy --config-file pyproject.toml code-fish/cac.py code-fish/src
+          uvx mypy --config-file pyproject.toml code/main.py code/src
+
+      - name: Radon complexity
+        run: uvx radon cc code code-fish scripts --min D --show-complexity --average --exclude .git,.venv,venv,__pycache__,test-results
+
+      - name: Vulture dead code
+        run: uvx vulture code code-fish scripts --min-confidence 80
+
+      - name: Duplicate code
+        run: npx --yes jscpd --config .jscpd.json --noTips
+
+      - name: Validate questions
+        run: python scripts/validate_questions.py
