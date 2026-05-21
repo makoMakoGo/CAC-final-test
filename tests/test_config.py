@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from src.config import ModelConfig, RetryConfig, expand_env_vars, load_config
+from cac.config import ModelConfig, RetryConfig, expand_env_vars, load_config
 
 
 def test_expand_env_vars_supports_braced_and_plain_names(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -49,6 +49,38 @@ retry:
     assert config.judge_model is None
     assert config.retry == RetryConfig(max_attempts=2, delay=0.5)
     assert config.question_banks == "data/question_banks.yaml"
+
+
+def test_load_config_accepts_legacy_single_model_shape(tmp_path: Path) -> None:
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        """
+test:
+  - provider: doubao
+    api_key: key
+    base_url: https://ark.example.test/api/v3/chat/completions
+    model_name: endpoint-id
+judge:
+  provider: anthropic
+  api_key: judge-key
+  base_url: https://api.anthropic.com
+  model_name: claude
+""".lstrip(),
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.test_model == ModelConfig(
+        name="endpoint-id",
+        provider="doubao",
+        api_key="key",
+        base_url="https://ark.example.test/api/v3/chat/completions",
+        model_id="endpoint-id",
+        params={},
+    )
+    assert config.judge_model is not None
+    assert config.judge_model.name == "claude"
 
 
 def test_load_config_rejects_missing_test_model(tmp_path: Path) -> None:

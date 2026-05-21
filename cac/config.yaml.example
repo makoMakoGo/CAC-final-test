@@ -1,0 +1,30 @@
+# CAC Benchmark 配置示例
+# 复制此文件为 config.yaml 并填入你的 API 密钥
+
+test-model:
+  name: gpt-4o                  # 输出文件名 (test-results/{name}.md)
+  provider: openai              # gemini | anthropic | openai | custom | doubao
+  api_key: ${OPENAI_API_KEY}    # 支持环境变量
+  base_url: https://api.openai.com/v1
+  model_id: gpt-4o              # API 请求用的 model 字段
+  params:
+    temperature: 0.3
+    max_tokens: 8192
+    timeout: 300
+
+judge-model:
+  name: gpt-4o-judge
+  provider: openai
+  api_key: ${OPENAI_API_KEY}
+  base_url: https://api.openai.com/v1
+  model_id: gpt-4o
+  params:
+    temperature: 0.1
+    max_tokens: 4096
+
+retry:
+  max_attempts: 3
+  delay: 10
+
+# 题库配置路径 (可选，默认 cac/data/question_banks.yaml)
+# question_banks: cac/data/question_banks.yaml

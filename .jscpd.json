@@ -1,5 +1,5 @@
 {
-  "path": ["code", "code-fish", "scripts", "tests"],
+  "path": ["cac", "scripts", "tests"],
   "format": ["python"],
   "minLines": 12,
   "minTokens": 80,

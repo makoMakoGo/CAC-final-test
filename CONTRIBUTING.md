@@ -264,7 +264,7 @@ scoring_std:
 - 逻辑题：`logic-{difficulty}-{number}`
 - 综合题：`comp-{number}`
 
-**可用的评分指标（定义在 `code-fish/data/indicators.yaml`）：**
+**可用的评分指标（定义在 `cac/data/indicators.yaml`）：**
 
 | 类别 | 指标 | 说明 |
 |------|------|------|
@@ -414,4 +414,4 @@ scoring_std:
 - **新题目必须**包含 `meta.yaml`、`prompt.md`、`reference.md` 三个文件
 - **已有题目**会逐步迁移到新格式
 - `README.md` 保持原有内容，作为人类可读的完整文档
-- 评分指标必须在 `code-fish/data/indicators.yaml` 中定义
+- 评分指标必须在 `cac/data/indicators.yaml` 中定义

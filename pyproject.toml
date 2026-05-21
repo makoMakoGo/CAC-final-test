@@ -38,7 +38,7 @@ average = true
 exclude = ".git,.venv,venv,__pycache__,test-results"
 
 [tool.vulture]
-paths = ["code", "code-fish", "scripts"]
+paths = ["cac", "scripts"]
 min_confidence = 80
 exclude = [
     ".git",
@@ -50,10 +50,9 @@ exclude = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["code-fish"]
+pythonpath = ["."]
 addopts = [
-    "--cov=code-fish/src",
-    "--cov=code/src",
+    "--cov=cac",
     "--cov-report=term-missing",
     "--cov-fail-under=10",
 ]

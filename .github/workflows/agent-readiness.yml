@@ -30,29 +30,25 @@ jobs:
         uses: astral-sh/setup-uv@v7
 
       - name: Validate dependency pins
-        run: |
-          uv pip compile --no-header code-fish/requirements.txt
-          uv pip compile --no-header code/requirements.txt
+        run: uv pip compile --no-header cac/requirements.txt
 
       - name: Ruff lint
-        run: uvx ruff check code code-fish scripts
+        run: uvx ruff check cac scripts
 
       - name: Ruff format
-        run: uvx ruff format --check code code-fish scripts
+        run: uvx ruff format --check cac scripts
 
       - name: Unit tests
-        run: uvx --with-requirements code-fish/requirements.txt pytest
+        run: uvx --with-requirements cac/requirements.txt pytest
 
       - name: Mypy
-        run: |
-          uvx mypy --config-file pyproject.toml code-fish/cac.py code-fish/src
-          uvx mypy --config-file pyproject.toml code/main.py code/src
+        run: uvx mypy --config-file pyproject.toml cac scripts
 
       - name: Radon complexity
-        run: uvx radon cc code code-fish scripts --min D --show-complexity --average --exclude .git,.venv,venv,__pycache__,test-results
+        run: uvx radon cc cac scripts --min D --show-complexity --average --exclude .git,.venv,venv,__pycache__,test-results
 
       - name: Vulture dead code
-        run: uvx vulture code code-fish scripts --min-confidence 80
+        run: uvx vulture cac scripts --min-confidence 80
 
       - name: Duplicate code
         run: npx --yes jscpd --config .jscpd.json --noTips

@@ -2,32 +2,28 @@
 
 [![Run in Smithery](https://smithery.ai/badge/skills/t-auto)](https://smithery.ai/skills?ns=t-auto&utm_source=github&utm_medium=badge)
 
-
-Benchmark for Evaluating the Performance of Natural Language Models and Agents / 自然语言模型 & Agent性能评测基准
+Benchmark for Evaluating the Performance of Natural Language Models and Agents / 自然语言模型 & Agent 性能评测基准
 
 ## 📖 项目简介 (Project Overview)
 
 本项目旨在构建一个全面且高难度的 AI 能力评测体系，主要包含：
 
 - **全方位题库**：涵盖大模型与 Agent 的核心能力测试
-- **自动化评测**：使用 [code-fish](./code-fish/) CLI 工具实现自动化测试与评分
+- **自动化评测**：使用 `cac/` 统一 CLI 工具实现自动化测试与评分
 - **标准化格式**：题目采用 `meta.yaml` + `prompt.md` + `reference.md` 结构
 - **开发工具**：Git hooks 验证 + AI 辅助创建题目（见 [AGENTS.md](./AGENTS.md)）
 
 ## 🚀 快速开始 (Quick Start)
 
 ```bash
-cd code-fish
-pip install -r requirements.txt
-cp config.yaml.example config.yaml  # 编辑填入 API key
+pip install -r cac/requirements.txt
+cp cac/config.yaml.example config.yaml  # 编辑填入 API key
 
 # 运行测试
 python cac.py                       # 交互式菜单
 python cac.py --scope math          # 测试数理题库
 python cac.py --mode all -j 4       # 测试+评分，4并发
 ```
-
-详见 [code-fish/README.md](./code-fish/README.md) 了解完整用法。
 
 ## 💡 设计理念 (Design Philosophy)
 
@@ -81,11 +77,11 @@ python cac.py --mode all -j 4       # 测试+评分，4并发
 ## 🤝 投稿需求 (Contribution)
 
 我们需要您提供：
-1.  **题目与标准答案**：清晰的问题描述及对应的正确解答。
-2.  **考察点说明**：说明该题目主要考察 LLM 的哪一项能力。
-3.  **裁判标准**：为了满足自动化评测需求，我们需要一个裁判 LLM 能对照标准答案判断回答问题的模型的对错。
-    - ❌ **不可**是纯粹的证明题。
-    - ❌ **不可**是没有标准答案的发散性问题（难以判断"对错"）。
+1. **题目与标准答案**：清晰的问题描述及对应的正确解答。
+2. **考察点说明**：说明该题目主要考察 LLM 的哪一项能力。
+3. **裁判标准**：为了满足自动化评测需求，我们需要一个裁判 LLM 能对照标准答案判断回答问题的模型的对错。
+   - ❌ **不可**是纯粹的证明题。
+   - ❌ **不可**是没有标准答案的发散性问题（难以判断"对错"）。
 
 ### 📁 题目文件结构
 
@@ -121,4 +117,3 @@ NNN-problem-name/
 >
 > **Conclusion**
 > The local deformation functor $F$ ... is **miniversal**.
-> However, the crude local functor $F_1$ ... is **not miniversal**.
