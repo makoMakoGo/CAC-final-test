@@ -29,41 +29,5 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
-      - name: Validate dependency pins
-        run: uv pip compile --no-header cac/requirements.txt
-
-      - name: Ruff lint
-        run: uvx ruff check cac scripts
-
-      - name: Ruff format
-        run: uvx ruff format --check cac scripts
-
-      - name: Unit tests
-        run: uvx --with-requirements cac/requirements.txt pytest
-
-      - name: Repository health check
-        run: uvx --with-requirements cac/requirements.txt python scripts/doctor.py
-
-      - name: Mypy
-        run: uvx mypy --config-file pyproject.toml cac scripts
-
-      - name: Radon complexity
-        run: uvx radon cc cac scripts --min D --show-complexity --average --exclude .git,.venv,venv,__pycache__,test-results
-
-      - name: Vulture dead code
-        run: uvx vulture cac scripts --min-confidence 80
-
-      - name: Unused dependency scan
-        run: uvx deptry cac scripts tests --requirements-files cac/requirements.txt --known-first-party cac --known-first-party scripts --package-module-name-map pyyaml=yaml --per-rule-ignores "DEP002=pytest|pytest-cov"
-
-      - name: Duplicate code
-        run: npx --yes jscpd --config .jscpd.json --noTips
-
-      - name: Bandit security scan
-        run: uvx bandit -r cac scripts --confidence-level medium --severity-level medium
-
-      - name: Dependency vulnerability audit
-        run: uvx pip-audit -r cac/requirements.txt
-
-      - name: Validate questions
-        run: uv run --no-project --with pyyaml==6.0.3 python scripts/validate_questions.py
+      - name: Run validation suite
+        run: make ci
