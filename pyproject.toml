@@ -28,3 +28,10 @@ ignore_missing_imports = true
 explicit_package_bases = true
 strict = true
 warn_unused_configs = true
+
+[tool.radon]
+cc_min = "A"
+cc_max = "C"
+show_complexity = true
+average = true
+exclude = ".git,.venv,venv,__pycache__,test-results"
