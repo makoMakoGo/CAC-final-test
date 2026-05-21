@@ -1,0 +1,43 @@
+name: Question submission
+description: Propose a new benchmark question or a correction to an existing question.
+title: "[Question]: "
+labels:
+  - question-bank
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - math
+        - code
+        - logic
+        - comp
+        - hallucination
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      options:
+        - base
+        - advanced
+        - final
+        - final+
+    validations:
+      required: true
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Prompt or correction
+      description: Include the proposed prompt, reference answer, or exact correction.
+    validations:
+      required: true
+  - type: textarea
+    id: scoring
+    attributes:
+      label: Scoring indicators
+      description: List expected scoring indicators and any constraints.
+    validations:
+      required: true
