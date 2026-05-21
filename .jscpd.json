@@ -1,0 +1,15 @@
+{
+  "path": ["code", "code-fish", "scripts"],
+  "format": ["python"],
+  "minLines": 12,
+  "minTokens": 80,
+  "threshold": 0,
+  "reporters": ["console"],
+  "ignore": [
+    "**/__pycache__/**",
+    "**/test-results/**",
+    "**/data/questions/**",
+    "**/results/**",
+    "**/logs/**"
+  ]
+}
