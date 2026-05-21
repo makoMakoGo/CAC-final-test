@@ -5,7 +5,7 @@
 import yaml
 import os
 import re
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, cast
 from src.adaptors import create_adaptor, BaseLLMAdaptor
 from src import logger as L
 import time
@@ -101,7 +101,7 @@ def parse_judgment_response(
     yaml_text = yaml_match.group(1) if yaml_match else response
 
     def try_load_yaml(text: str) -> Dict[str, Any]:
-        return yaml.safe_load(text)
+        return cast(Dict[str, Any], yaml.safe_load(text))
 
     def sanitize_unknown_backslashes(text: str) -> str:
         # 将不被 YAML 双引号支持的反斜杠转义加倍，避免 \m、\g 等触发解析错误
@@ -216,7 +216,7 @@ def save_input(
     question_id: str,
     prompt: str,
     output_dir: str = "results/raw/input-judge",
-):
+) -> None:
     os.makedirs(output_dir, exist_ok=True)
 
     # 清理模型名称
@@ -241,7 +241,7 @@ def save_raw_judgment(
     model_answer: str,
     judgment: Dict[str, Any],
     output_dir: str = "results/raw/judge",
-):
+) -> None:
     """
     保存原始评判结果到YAML文件
 
@@ -288,7 +288,7 @@ def load_indicators() -> Dict[str, str]:
         indicators_data = yaml.safe_load(f)
 
     # 构建扁平化的映射表
-    indicators_map = {}
+    indicators_map: Dict[str, str] = {}
     for category in indicators_data:
         category_indicators = category.get("indicators", {})
         indicators_map.update(category_indicators)
@@ -337,7 +337,7 @@ def process_judgments(
     L.info(f"使用评判模型: {judge_config['model_name']}")
 
     # 存储所有评判结果
-    all_judgments = {}
+    all_judgments: Dict[str, Dict[str, Any]] = {}
 
     # 创建题目映射
     questions_map = {q["id"]: q for q in questions}
@@ -346,7 +346,7 @@ def process_judgments(
     for model_name, answers in all_answers.items():
         L.info(f"开始评判模型 {model_name} 的答案")
 
-        model_judgments = {}
+        model_judgments: Dict[str, Any] = {}
 
         # 遍历该模型的所有答案
         for question_id, answer in answers.items():

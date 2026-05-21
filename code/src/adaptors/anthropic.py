@@ -3,6 +3,7 @@ Anthropic API 适配器
 """
 
 import requests
+from typing import Any, cast
 
 from .base import BaseLLMAdaptor
 
@@ -13,7 +14,7 @@ class AnthropicAdaptor(BaseLLMAdaptor):
     def get_provider_name(self) -> str:
         return "anthropic"
 
-    def chat(self, prompt: str, **kwargs) -> str:
+    def chat(self, prompt: str, **kwargs: Any) -> str:
         """
         调用Anthropic API
 
@@ -46,4 +47,4 @@ class AnthropicAdaptor(BaseLLMAdaptor):
 
         # 解析响应
         result = response.json()
-        return result["content"][0]["text"]
+        return cast(str, result["content"][0]["text"])

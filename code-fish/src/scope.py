@@ -3,7 +3,7 @@
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, cast
 
 import yaml
 
@@ -35,9 +35,9 @@ class ScopeResolver:
         self.banks_config = self._load_banks_config()
         self.base_dir = self.banks_config_path.parent.parent  # code-fish 目录
 
-    def _load_banks_config(self) -> dict:
+    def _load_banks_config(self) -> dict[str, Any]:
         with open(self.banks_config_path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
+            return cast(dict[str, Any], yaml.safe_load(f))
 
     def resolve(self, scope_str: str, range_str: Optional[str] = None) -> List[Question]:
         """
@@ -86,7 +86,7 @@ class ScopeResolver:
         # 再尝试从配置文件查找
         for bank in self.banks_config.get("banks", []):
             if bank.get("category") == category:
-                return (self.base_dir / bank["path"]).resolve()
+                return (self.base_dir / str(bank["path"])).resolve()
 
         return None
 
@@ -107,7 +107,7 @@ class ScopeResolver:
                 return False
             return True
 
-        def scan_difficulty_dir(difficulty_dir: Path):
+        def scan_difficulty_dir(difficulty_dir: Path) -> None:
             if not difficulty_dir.exists():
                 return
 

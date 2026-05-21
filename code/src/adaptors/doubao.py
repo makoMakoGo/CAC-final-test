@@ -3,6 +3,7 @@
 """
 
 import requests
+from typing import Any, cast
 
 from .base import BaseLLMAdaptor
 
@@ -13,7 +14,7 @@ class DoubaoAdaptor(BaseLLMAdaptor):
     def get_provider_name(self) -> str:
         return "doubao"
 
-    def chat(self, prompt: str, **kwargs) -> str:
+    def chat(self, prompt: str, **kwargs: Any) -> str:
         """
         调用豆包API
 
@@ -42,4 +43,4 @@ class DoubaoAdaptor(BaseLLMAdaptor):
 
         # 解析响应
         result = response.json()
-        return result["choices"][0]["message"]["content"]
+        return cast(str, result["choices"][0]["message"]["content"])

@@ -29,7 +29,7 @@ def md_to_string(file_path: str, encoding: str = "utf-8") -> str:
         return f.read()
 
 
-def _main(argv: Optional[list] = None) -> int:
+def _main(argv: Optional[list[str]] = None) -> int:
     """
     简单的 CLI：传入一个 Markdown 文件路径到标准输出打印其内容。
 

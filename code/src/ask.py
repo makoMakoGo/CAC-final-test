@@ -6,6 +6,7 @@ import yaml
 import os
 import time
 from typing import Dict, Any, List
+from typing import cast
 from src.adaptors import create_adaptor, BaseLLMAdaptor
 from src import logger as L
 from src.md2str import md_to_string
@@ -68,7 +69,7 @@ def ask_question(
             )
             answer = adaptor.chat(prompt)
             L.info(f"成功获取答案: {question['id']}")
-            return answer
+            return cast(str, answer)
         except Exception as e:
             last_error = e
             L.warning(f"提问失败 (尝试 {attempt}/{max_attempts}): {str(e)}")
@@ -88,7 +89,7 @@ def save_input(
     question_id: str,
     prompt: str,
     output_dir: str = "results/raw/input_test",
-):
+) -> None:
     """
     保存发送给模型的prompt（YAML）
     """
@@ -112,7 +113,7 @@ def save_raw_answer(
     question_id: str,
     answer: str,
     output_dir: str = "results/raw/test",
-):
+) -> None:
     """
     保存原始答案到YAML文件
 
@@ -161,7 +162,7 @@ def process_questions(
     prompt_template = load_prompt_template("prompts/question.md")
 
     # 存储所有答案
-    all_answers = {}
+    all_answers: Dict[str, Dict[str, str]] = {}
 
     # 遍历所有被测模型
     for model_config in test_models:
@@ -183,7 +184,7 @@ def process_questions(
                 continue
 
             # 存储该模型的所有答案
-            model_answers = {}
+            model_answers: Dict[str, str] = {}
 
             # 遍历所有题目（串行执行）
             for question in questions:

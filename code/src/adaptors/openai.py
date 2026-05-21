@@ -3,6 +3,7 @@ OpenAI API 适配器
 """
 
 import requests
+from typing import Any, cast
 
 from .base import BaseLLMAdaptor
 
@@ -13,7 +14,7 @@ class OpenAIAdaptor(BaseLLMAdaptor):
     def get_provider_name(self) -> str:
         return "openai"
 
-    def chat(self, prompt: str, **kwargs) -> str:
+    def chat(self, prompt: str, **kwargs: Any) -> str:
         """
         调用OpenAI API
 
@@ -42,4 +43,4 @@ class OpenAIAdaptor(BaseLLMAdaptor):
 
         # 解析响应
         result = response.json()
-        return result["choices"][0]["message"]["content"]
+        return cast(str, result["choices"][0]["message"]["content"])

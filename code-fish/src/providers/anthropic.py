@@ -1,5 +1,7 @@
 """Anthropic Provider"""
 
+from typing import Any, cast
+
 import requests
 
 from .base import BaseProvider
@@ -12,7 +14,7 @@ class AnthropicProvider(BaseProvider):
         """Anthropic 支持 tool use"""
         return True
 
-    def chat_with_tool(self, prompt: str, tool_schema: dict) -> dict:
+    def chat_with_tool(self, prompt: str, tool_schema: dict[str, Any]) -> dict[str, Any]:
         """使用 tool use 强制输出结构化数据"""
         headers = {
             "Content-Type": "application/json",
@@ -48,7 +50,7 @@ class AnthropicProvider(BaseProvider):
         # 从 content 中找到 tool_use 块
         for item in result["content"]:
             if isinstance(item, dict) and item.get("type") == "tool_use":
-                return item["input"]
+                return cast(dict[str, Any], item["input"])
 
         raise ValueError("Anthropic 响应中未找到 tool_use 块")
 

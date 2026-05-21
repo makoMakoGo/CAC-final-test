@@ -1,7 +1,7 @@
 import os
 import yaml
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any, List, cast
 
 from src import logger as L
 from src.ask import process_questions
@@ -19,7 +19,7 @@ def load_yaml_config(filepath: str) -> Dict[str, Any]:
         Dict[str, Any]: 配置内容
     """
     with open(filepath, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        return cast(Dict[str, Any], yaml.safe_load(f))
 
 
 def load_yaml_data(filepath: str) -> List[Dict[str, Any]]:
@@ -33,7 +33,7 @@ def load_yaml_data(filepath: str) -> List[Dict[str, Any]]:
         List[Dict[str, Any]]: 数据列表
     """
     with open(filepath, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        return cast(List[Dict[str, Any]], yaml.safe_load(f))
 
 
 def validate_indicators(
@@ -94,7 +94,7 @@ def save_final_results(
     all_answers: Dict[str, Dict[str, str]],
     all_judgments: Dict[str, Dict[str, Any]],
     output_dir: str = "results",
-):
+) -> None:
     """
     保存最终结果
 
@@ -165,7 +165,7 @@ def save_final_results(
     L.info(f"最终结果已保存: {filepath}")
 
 
-def main():
+def main() -> None:
     """主函数"""
     try:
         # 启用文件日志

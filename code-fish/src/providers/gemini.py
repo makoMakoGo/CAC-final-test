@@ -1,5 +1,7 @@
 """Google Gemini Provider"""
 
+from typing import Any, cast
+
 import requests
 
 from .base import BaseProvider
@@ -12,7 +14,7 @@ class GeminiProvider(BaseProvider):
         """Gemini 支持 function calling"""
         return True
 
-    def chat_with_tool(self, prompt: str, tool_schema: dict) -> dict:
+    def chat_with_tool(self, prompt: str, tool_schema: dict[str, Any]) -> dict[str, Any]:
         """使用 function calling 强制输出结构化数据"""
         params = {"key": self.config.api_key}
         headers = {"Content-Type": "application/json"}
@@ -50,7 +52,7 @@ class GeminiProvider(BaseProvider):
         parts = result["candidates"][0]["content"]["parts"]
         for part in parts:
             if "functionCall" in part:
-                return part["functionCall"]["args"]
+                return cast(dict[str, Any], part["functionCall"]["args"])
 
         raise ValueError("Gemini 响应中未找到 functionCall")
 
@@ -82,4 +84,4 @@ class GeminiProvider(BaseProvider):
         response.raise_for_status()
 
         result = response.json()
-        return result["candidates"][0]["content"]["parts"][0]["text"]
+        return cast(str, result["candidates"][0]["content"]["parts"][0]["text"])

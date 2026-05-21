@@ -6,7 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Optional
+from typing import Any, Optional
 
 # 添加 src 到路径
 sys.path.insert(0, str(Path(__file__).parent))
@@ -19,7 +19,7 @@ from src.providers import create_provider
 from src.reporting import Phase, create_reporter, is_tty
 
 
-def print_rich_help():
+def print_rich_help() -> None:
     """使用 rich 打印美化的帮助信息"""
     from rich.console import Console
     from rich.table import Table
@@ -96,7 +96,7 @@ def print_rich_help():
     console.print()
 
 
-def make_json_base(args, config) -> dict:
+def make_json_base(args: Any, config: Any) -> dict[str, Any]:
     judge_model = None
     if getattr(config, "judge_model", None) is not None:
         judge_model = {
@@ -125,7 +125,7 @@ def make_json_base(args, config) -> dict:
     }
 
 
-def _make_stub_config():
+def _make_stub_config() -> SimpleNamespace:
     return SimpleNamespace(
         test_model=SimpleNamespace(
             name=None,
@@ -231,13 +231,13 @@ def _run_once(argv: list[str]) -> int:
     use_rich = not args.json  # JSON 模式禁用 rich
     reporter = create_reporter(stream=log_stream, use_rich=use_rich)
 
-    def log(message: str = ""):
+    def log(message: str = "") -> None:
         print(message, file=log_stream)
 
-    def emit_json(payload: dict) -> None:
+    def emit_json(payload: dict[str, Any]) -> None:
         print(json.dumps(payload, ensure_ascii=False))
 
-    def json_error(error: str, cfg=None) -> int:
+    def json_error(error: str, cfg: Any = None) -> int:
         cfg = cfg or _make_stub_config()
         result = make_json_base(args, cfg)
         result["ok"] = False
@@ -332,7 +332,7 @@ def _run_once(argv: list[str]) -> int:
     test_summary = None
     judge_summary = None
 
-    def safe_reporter_call(method: str, *call_args) -> None:
+    def safe_reporter_call(method: str, *call_args: Any) -> None:
         fn = getattr(reporter, method, None)
         if fn is None:
             return

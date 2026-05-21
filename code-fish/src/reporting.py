@@ -88,14 +88,17 @@ STYLES = {
 }
 
 
-def create_console(file=None, force_terminal: Optional[bool] = None) -> "Console":
+def create_console(
+    file: Optional[TextIO] = None,
+    force_terminal: Optional[bool] = None,
+) -> "Console":
     """创建 rich Console，自动检测 TTY"""
     from rich.console import Console
 
     return Console(file=file, force_terminal=force_terminal, emoji=False)
 
 
-def is_tty(file=None) -> bool:
+def is_tty(file: Optional[TextIO] = None) -> bool:
     """检测是否为 TTY 环境"""
     f = file or sys.stdout
     return hasattr(f, "isatty") and f.isatty()

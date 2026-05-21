@@ -233,7 +233,7 @@ class TestRunner:
             max_attempts=max_attempts, last_error=last_error or RuntimeError("unknown error")
         )
 
-    def _write_result(self, question_path: Path, response: str):
+    def _write_result(self, question_path: Path, response: str) -> None:
         """写入测试结果"""
         output_dir = question_path / "test-results"
         output_dir.mkdir(exist_ok=True)

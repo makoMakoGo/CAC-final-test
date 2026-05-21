@@ -28,7 +28,7 @@ import sys
 import threading
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Iterator, Optional, cast
 
 # ==============================
 # 全局配置（按需修改）
@@ -70,7 +70,7 @@ _CONFIG_LOCK = threading.RLock()
 
 # Windows 颜色兼容（可选）
 try:  # 若安装了 colorama，则初始化以支持 Windows 彩色输出
-    import colorama  # type: ignore
+    import colorama
 
     colorama.just_fix_windows_console()  # 开启原生 ANSI 支持
 except Exception:
@@ -99,7 +99,7 @@ class _ColorFormatter(logging.Formatter):
 
 def _str_to_level(level_name: str) -> int:
     try:
-        return getattr(logging, level_name.upper())
+        return cast(int, getattr(logging, level_name.upper()))
     except Exception:
         return logging.INFO
 
@@ -253,7 +253,7 @@ def log_json(
 
 
 @contextmanager
-def log_duration(title: str, level: str = "INFO"):
+def log_duration(title: str, level: str = "INFO") -> Iterator[None]:
     """上下文管理器：统计代码块耗时。
 
     with log_duration("load data"):

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Optional, Tuple, cast
 
 from rich import box
 from rich.align import Align
@@ -58,7 +58,7 @@ class InteractiveMenu:
         self.console = console or Console(emoji=False)
         self._print_banner()
 
-    def _print_banner(self):
+    def _print_banner(self) -> None:
         logo = r"""
    ______   ___     ______
   / ____/  /   |   / ____/
@@ -129,20 +129,20 @@ class InteractiveMenu:
         idx = self._show_menu("Select Mode", self.MODES, allow_back=False)
         if idx is None:
             return None
-        return self.MODES[idx][0]
+        return str(self.MODES[idx][0])
 
     def _select_category(self) -> Optional[str]:
         idx = self._show_menu("Select Category", self.CATEGORIES, allow_back=True)
         if idx is None:
             return None
-        return self.CATEGORIES[idx][0]
+        return str(self.CATEGORIES[idx][0])
 
     def _select_difficulty(self) -> Optional[str]:
         options = [("all", "全部"), *self.DIFFICULTIES]
         idx = self._show_menu("Select Difficulty", options, allow_back=True)
         if idx is None:
             return None
-        return options[idx][0]
+        return str(options[idx][0])
 
     def _input_range(self) -> Optional[str]:
         self.console.print()
@@ -155,7 +155,7 @@ class InteractiveMenu:
             if not value:
                 return None
             if self._is_valid_range(value):
-                return value
+                return cast(str, value)
             self.console.print("  [red]Format error: use 001-005 or 003[/]")
 
     def _input_advanced(self, mode: str) -> Tuple[int, bool, Optional[str]]:
@@ -254,7 +254,7 @@ class InteractiveMenu:
             if choice == 0:
                 return None
             if 1 <= choice <= max_choice:
-                return choice - 1
+                return cast(int, choice - 1)
             self.console.print(f"  [red]Invalid choice: {choice} (Valid: 0-{max_choice})[/]")
 
     @staticmethod

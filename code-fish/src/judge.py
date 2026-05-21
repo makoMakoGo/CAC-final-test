@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Literal, Optional
+from typing import Any, List, Literal, Optional, cast
 
 import yaml
 
@@ -27,7 +27,7 @@ class JudgeItemResult:
     status: Literal["done", "skipped", "failed", "no_answer"]
     total_score: Optional[float] = None
     max_score: Optional[float] = None
-    dimensions: Optional[dict] = None
+    dimensions: Optional[dict[str, Any]] = None
     feedback: Optional[str] = None
     output_file: Optional[Path] = None
     elapsed_s: Optional[float] = None
@@ -93,9 +93,9 @@ JUDGE_PROMPT_TEMPLATE_LEGACY = """你是专业评审员。请根据以下信息�
 ```"""
 
 
-def _build_judge_tool_schema(max_score: float, indicators: list) -> dict:
+def _build_judge_tool_schema(max_score: float, indicators: list[str]) -> dict[str, Any]:
     """构建评分工具的 JSON Schema"""
-    dimension_properties = {}
+    dimension_properties: dict[str, Any] = {}
     for ind in indicators:
         dimension_properties[ind] = {
             "type": "object",
@@ -405,7 +405,7 @@ class JudgeRunner:
             items=items,
         )
 
-    def _load_meta(self, question_path: Path) -> dict:
+    def _load_meta(self, question_path: Path) -> dict[str, Any]:
         meta_file = question_path / "meta.yaml"
         if not meta_file.exists():
             return {}
@@ -413,15 +413,15 @@ class JudgeRunner:
             meta = yaml.safe_load(f) or {}
             if not isinstance(meta, dict):
                 return {}
-            return meta
+            return cast(dict[str, Any], meta)
 
     def _build_judge_prompt(
         self,
         prompt: str,
         reference: str,
         answer: str,
-        indicators: list,
-        max_score: int,
+        indicators: list[str],
+        max_score: Any,
         use_tool: bool = True,
     ) -> str:
         indicators_list = "\n".join(f"- {ind}" for ind in indicators)
@@ -434,7 +434,7 @@ class JudgeRunner:
             indicators_list=indicators_list,
         )
 
-    def _parse_judge_response(self, response: str) -> dict:
+    def _parse_judge_response(self, response: str) -> dict[str, Any]:
         """解析评分模型的 JSON 响应（仅用于 legacy 模式）"""
         # 尝试提取 JSON 块
         if "```json" in response:
@@ -448,17 +448,17 @@ class JudgeRunner:
             if end > start:
                 response = response[start:end].strip()
 
-        return json.loads(response)
+        return cast(dict[str, Any], json.loads(response))
 
     def _request_with_retry(
         self,
         prompt: str,
-        tool_schema: Optional[dict],
+        tool_schema: Optional[dict[str, Any]],
         index: int,
         total: int,
         question_id: str,
         reporter: Optional[Reporter],
-    ) -> tuple[dict, int]:
+    ) -> tuple[dict[str, Any], int]:
         """
         带重试的请求。
         - 如果 tool_schema 不为 None 且 provider 支持 tool calling，使用 chat_with_tool
@@ -467,7 +467,7 @@ class JudgeRunner:
         """
         max_attempts = self.retry_config.max_attempts
         delay = self.retry_config.delay
-        last_error = None
+        last_error: Optional[Exception] = None
 
         use_tool = tool_schema is not None and self.provider.supports_tool_calling()
 
@@ -510,10 +510,10 @@ class JudgeRunner:
         target_model: str,
         total_score: float,
         max_score: float,
-        indicators: list,
-        dimensions: dict,
+        indicators: list[str],
+        dimensions: dict[str, Any],
         feedback: str,
-    ):
+    ) -> None:
         output_file.parent.mkdir(exist_ok=True)
 
         result = {

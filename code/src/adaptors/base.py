@@ -3,6 +3,7 @@
 """
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class BaseLLMAdaptor(ABC):
@@ -22,7 +23,7 @@ class BaseLLMAdaptor(ABC):
         self.model_name = model_name
 
     @abstractmethod
-    def chat(self, prompt: str, **kwargs) -> str:
+    def chat(self, prompt: str, **kwargs: Any) -> str:
         """
         发送聊天请求并获取响应
 

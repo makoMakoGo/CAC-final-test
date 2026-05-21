@@ -3,6 +3,7 @@
 import json
 import sys
 import time
+from typing import Any, cast
 
 import requests
 
@@ -16,7 +17,7 @@ class OpenAIProvider(BaseProvider):
         """openai provider 支持 tool calling，custom 模式不支持"""
         return (self.config.provider or "").lower() != "custom"
 
-    def chat_with_tool(self, prompt: str, tool_schema: dict) -> dict:
+    def chat_with_tool(self, prompt: str, tool_schema: dict[str, Any]) -> dict[str, Any]:
         """使用 function calling 强制输出结构化数据"""
         if not self.supports_tool_calling():
             raise NotImplementedError("custom provider 不支持 tool calling")
@@ -47,7 +48,7 @@ class OpenAIProvider(BaseProvider):
 
         result = response.json()
         tool_call = result["choices"][0]["message"]["tool_calls"][0]
-        return json.loads(tool_call["function"]["arguments"])
+        return cast(dict[str, Any], json.loads(tool_call["function"]["arguments"]))
 
     def chat(self, prompt: str) -> str:
         headers = {
@@ -86,9 +87,15 @@ class OpenAIProvider(BaseProvider):
 
         response = requests.post(url, headers=headers, json=data, timeout=timeout)
         response.raise_for_status()
-        return response.json()["choices"][0]["message"]["content"]
+        return cast(str, response.json()["choices"][0]["message"]["content"])
 
-    def _stream_chat(self, url: str, headers: dict, data: dict, timeout: int) -> str:
+    def _stream_chat(
+        self,
+        url: str,
+        headers: dict[str, str],
+        data: dict[str, Any],
+        timeout: int,
+    ) -> str:
         """流式请求，显示实时进度（仅 TTY 环境）"""
         start = time.time()
         ttft = None

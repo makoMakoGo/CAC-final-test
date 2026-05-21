@@ -4,7 +4,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import yaml
 
@@ -18,7 +18,7 @@ class ModelConfig:
     api_key: str
     base_url: str
     model_id: str
-    params: dict = field(default_factory=dict)
+    params: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -46,7 +46,7 @@ def expand_env_vars(value: str) -> str:
 
     pattern = r"\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)"
 
-    def replace(match):
+    def replace(match: re.Match[str]) -> str:
         var_name = match.group(1) or match.group(2)
         env_value = os.environ.get(var_name)
         if env_value is None:
@@ -56,7 +56,7 @@ def expand_env_vars(value: str) -> str:
     return re.sub(pattern, replace, value)
 
 
-def expand_env_vars_recursive(obj):
+def expand_env_vars_recursive(obj: Any) -> Any:
     """递归展开字典/列表中的环境变量"""
     if isinstance(obj, str):
         return expand_env_vars(obj)
@@ -67,7 +67,7 @@ def expand_env_vars_recursive(obj):
     return obj
 
 
-def _parse_model(data: dict, section: str) -> ModelConfig:
+def _parse_model(data: dict[str, Any], section: str) -> ModelConfig:
     try:
         return ModelConfig(
             name=data["name"],
