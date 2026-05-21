@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 import threading
 import traceback
@@ -12,6 +13,26 @@ if TYPE_CHECKING:
     from rich.console import Console
     from rich.progress import Progress
     from rich.progress import TaskID
+
+
+_SENSITIVE_PATTERNS = (
+    re.compile(r"(?i)(api[_-]?key|token|password|secret|credential)(=|:)\s*[^&\s]+"),
+    re.compile(r"(?i)(Authorization:\s*Bearer\s+)[^\s]+"),
+    re.compile(r"(?i)(x-api-key:\s*)[^\s]+"),
+    re.compile(r"(?i)(key=)[^&\s]+"),
+)
+
+
+def scrub_sensitive_text(message: str) -> str:
+    scrubbed = message
+    for pattern in _SENSITIVE_PATTERNS:
+        scrubbed = pattern.sub(
+            lambda match: (
+                f"{match.group(1)}{match.group(2) if len(match.groups()) > 1 else ''}[REDACTED]"
+            ),
+            scrubbed,
+        )
+    return scrubbed
 
 
 def _write_internal_error(message: str) -> None:
@@ -29,7 +50,7 @@ def _reporter_exception(where: str, exc: BaseException) -> None:
         detail = f"{exc}"
 
     _write_internal_error(f"[reporting] {where} crashed")
-    _write_internal_error(detail.rstrip("\n"))
+    _write_internal_error(scrub_sensitive_text(detail.rstrip("\n")))
 
 
 class EventType(Enum):
@@ -165,7 +186,7 @@ class PlainReporter:
         if event.event_type == EventType.RETRY:
             attempt = event.attempt or 0
             max_attempts = event.max_attempts or 0
-            error = event.error or ""
+            error = scrub_sensitive_text(event.error or "")
             return f"{prefix} {event.question_id} RETRY {attempt}/{max_attempts}: {error}"
 
         if event.event_type == EventType.START:
@@ -177,7 +198,7 @@ class PlainReporter:
             return f"{prefix} SKIP {event.question_id} ({reason})"
 
         if event.event_type == EventType.NO_ANSWER:
-            error = event.error or ""
+            error = scrub_sensitive_text(event.error or "")
             return f"{prefix} NO_ANSWER {event.question_id} ({error})"
 
         if event.event_type == EventType.DONE:
@@ -200,7 +221,7 @@ class PlainReporter:
             return f"{prefix} DONE {event.question_id}"
 
         if event.event_type == EventType.FAIL:
-            error = event.error or ""
+            error = scrub_sensitive_text(event.error or "")
             return f"{prefix} FAIL {event.question_id}: {error}"
 
         return None
@@ -360,7 +381,7 @@ class RichReporter:
             return f"{prefix} {tag} {event.question_id}"
 
         if event.event_type == EventType.NO_ANSWER:
-            error = (event.error or "").strip()
+            error = scrub_sensitive_text((event.error or "").strip())
             if error:
                 return f"{prefix} {tag} {event.question_id}: {error}"
             return f"{prefix} {tag} {event.question_id}"
@@ -378,7 +399,7 @@ class RichReporter:
             return " ".join(parts)
 
         if event.event_type == EventType.FAIL:
-            error = (event.error or "").strip()
+            error = scrub_sensitive_text((event.error or "").strip())
             if error:
                 return f"{prefix} {tag} {event.question_id}: {error}"
             return f"{prefix} {tag} {event.question_id}"
