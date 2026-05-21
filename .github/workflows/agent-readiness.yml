@@ -53,5 +53,11 @@ jobs:
       - name: Duplicate code
         run: npx --yes jscpd --config .jscpd.json --noTips
 
+      - name: Bandit security scan
+        run: uvx bandit -r cac scripts --confidence-level medium --severity-level medium
+
+      - name: Dependency vulnerability audit
+        run: uvx pip-audit -r cac/requirements.txt
+
       - name: Validate questions
         run: uv run --no-project --with pyyaml==6.0.3 python scripts/validate_questions.py
