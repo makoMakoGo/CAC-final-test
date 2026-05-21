@@ -11,3 +11,5 @@ def test_doctor_passes_for_repository() -> None:
     assert overall_ok(checks)
     assert any(check.name == "question bank config" for check in checks)
     assert any(check.name == "import: cac.cli" for check in checks)
+    assert any(check.name == "agent instructions: AGENTS.md" for check in checks)
+    assert any(check.name == "agent instructions: CLAUDE.md" for check in checks)

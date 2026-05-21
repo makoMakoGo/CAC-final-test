@@ -21,6 +21,10 @@ REQUIRED_PATHS = (
     "scripts/validate_questions.py",
 )
 REQUIRED_IMPORTS = ("cac.cli", "cac.config", "cac.scope", "yaml", "requests", "rich")
+AGENT_INSTRUCTION_FILES = {
+    "AGENTS.md": ("## Build & Test", "## Architecture Overview", "## Security"),
+    "CLAUDE.md": ("## Quick Commands", "## Environment Setup", "## Project Architecture"),
+}
 
 
 @dataclass(frozen=True)
@@ -36,6 +40,7 @@ def run_health_checks(root: Path) -> list[HealthCheck]:
         sys.path.insert(0, str(root))
     checks: list[HealthCheck] = []
     checks.extend(_check_required_paths(root))
+    checks.extend(_check_agent_instructions(root))
     checks.extend(_check_imports())
     checks.extend(_check_question_banks(root))
     return checks
@@ -74,6 +79,34 @@ def _check_imports() -> list[HealthCheck]:
             )
         else:
             checks.append(HealthCheck(name=f"import: {module_name}", ok=True, detail="ok"))
+    return checks
+
+
+def _check_agent_instructions(root: Path) -> list[HealthCheck]:
+    checks = []
+    for relative_path, required_sections in AGENT_INSTRUCTION_FILES.items():
+        path = root / relative_path
+        if not path.exists():
+            checks.append(
+                HealthCheck(
+                    name=f"agent instructions: {relative_path}",
+                    ok=False,
+                    detail="missing",
+                )
+            )
+            continue
+
+        content = path.read_text(encoding="utf-8")
+        missing = [section for section in required_sections if section not in content]
+        checks.append(
+            HealthCheck(
+                name=f"agent instructions: {relative_path}",
+                ok=not missing,
+                detail="required sections found"
+                if not missing
+                else f"missing: {', '.join(missing)}",
+            )
+        )
     return checks
 
 
