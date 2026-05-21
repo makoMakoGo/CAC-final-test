@@ -40,6 +40,9 @@ jobs:
       - name: Ruff format
         run: uvx ruff format --check code code-fish scripts
 
+      - name: Unit tests
+        run: uvx --with-requirements code-fish/requirements.txt pytest
+
       - name: Mypy
         run: |
           uvx mypy --config-file pyproject.toml code-fish/cac.py code-fish/src

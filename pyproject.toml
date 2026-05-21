@@ -47,3 +47,7 @@ exclude = [
     "__pycache__",
     "test-results",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["code-fish"]
