@@ -3,7 +3,23 @@ description: Propose a new benchmark question or a correction to an existing que
 title: "[Question]: "
 labels:
   - question-bank
+  - needs-triage
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for benchmark question proposals or corrections. Do not include private prompts, model secrets, or real API keys.
+  - type: dropdown
+    id: change_type
+    attributes:
+      label: Change type
+      options:
+        - New question
+        - Correction to existing question
+        - Metadata or scoring update
+        - Reference answer update
+    validations:
+      required: true
   - type: dropdown
     id: category
     attributes:
@@ -27,6 +43,14 @@ body:
         - final+
     validations:
       required: true
+  - type: input
+    id: question_path
+    attributes:
+      label: Question path
+      description: For corrections, provide the existing question directory. For new questions, propose the target path.
+      placeholder: 数理能力基准测试题库/base-test/001-example
+    validations:
+      required: true
   - type: textarea
     id: prompt
     attributes:
@@ -41,3 +65,35 @@ body:
       description: List expected scoring indicators and any constraints.
     validations:
       required: true
+  - type: checkboxes
+    id: required_files
+    attributes:
+      label: Required artifact checklist
+      description: Confirm the issue or follow-up PR will cover the standard benchmark artifacts.
+      options:
+        - label: "`meta.yaml` includes ID, category, difficulty, and scoring indicators."
+          required: true
+        - label: "`prompt.md` contains the exact prompt for tested models."
+          required: true
+        - label: "`reference.md` contains the answer or scoring reference."
+          required: true
+        - label: "Test outputs, if included, are under `test-results/` and contain no secrets."
+          required: false
+  - type: checkboxes
+    id: validation
+    attributes:
+      label: Validation plan
+      options:
+        - label: "I will run `python scripts/validate_questions.py` before opening a PR."
+          required: true
+        - label: "I will run a scoped dry-run such as `python -m cac --scope math/base-test --dry-run` when applicable."
+          required: false
+        - label: "I verified the question has a deterministic answer or clear scoring rubric."
+          required: true
+  - type: textarea
+    id: model_results
+    attributes:
+      label: Model behavior or differentiation
+      description: Summarize observed model performance, failure modes, or why the question is useful.
+    validations:
+      required: false

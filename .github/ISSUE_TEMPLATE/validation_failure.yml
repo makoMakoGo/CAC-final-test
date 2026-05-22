@@ -1,0 +1,51 @@
+name: CI or validation failure
+description: Report a failing local check, GitHub Actions run, or question validation warning.
+title: "[Validation]: "
+labels:
+  - validation
+  - ci
+  - needs-triage
+body:
+  - type: dropdown
+    id: failure_type
+    attributes:
+      label: Failure type
+      options:
+        - "Local `make ci`"
+        - "`scripts/validate_questions.py`"
+        - GitHub Actions
+        - Security scan
+        - Dependency or quality gate
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command or workflow
+      description: Include the exact command or link to the workflow run.
+      placeholder: make ci
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Failure output
+      description: Paste the relevant failure output. Redact secrets before submitting.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: suspected_cause
+    attributes:
+      label: Suspected cause
+      description: If known, describe the likely regression or affected files.
+    validations:
+      required: false
+  - type: input
+    id: commit
+    attributes:
+      label: Commit SHA
+      description: Commit or branch where the failure was observed.
+    validations:
+      required: false

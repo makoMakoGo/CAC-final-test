@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Contribution guide
+    url: https://github.com/T-Auto/CAC-final-test/blob/main/CONTRIBUTING.md
+    about: Review benchmark contribution requirements before opening a question PR.
   - name: Security report
     url: https://github.com/T-Auto/CAC-final-test/security/advisories/new
     about: Report security vulnerabilities privately.

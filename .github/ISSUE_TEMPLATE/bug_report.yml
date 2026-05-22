@@ -1,9 +1,14 @@
 name: Bug report
-description: Report a reproducible problem in the benchmark runner or question validation.
+description: Report a reproducible problem in the runner, provider, reporting, or validation flow.
 title: "[Bug]: "
 labels:
   - bug
+  - needs-triage
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve CAC-final-test. Do not paste real API keys, provider secrets, or private benchmark outputs.
   - type: textarea
     id: summary
     attributes:
@@ -11,14 +16,46 @@ body:
       description: What went wrong?
     validations:
       required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      description: Pick the area closest to the failure.
+      options:
+        - runner
+        - provider
+        - question validation
+        - judging
+        - reporting
+        - CI or automation
+        - question bank content
+        - other
+    validations:
+      required: true
+  - type: input
+    id: scope
+    attributes:
+      label: Scope or question path
+      description: Include the scope, category, or question directory if applicable.
+      placeholder: math/base-test/001-chicken-rabbit-cage
+    validations:
+      required: false
   - type: textarea
     id: reproduce
     attributes:
       label: Steps to reproduce
-      description: Include the command, scope, config shape, and relevant output.
+      description: Include the exact command, sanitized config shape, and input scope.
       placeholder: |
-        1. Run `python cac.py --scope ...`
+        1. Run `python -m cac --scope math/base-test --dry-run`
         2. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual output
+      description: Paste the relevant output or traceback. Redact secrets before submitting.
+      render: shell
     validations:
       required: true
   - type: textarea
@@ -28,10 +65,23 @@ body:
       description: What should have happened instead?
     validations:
       required: true
+  - type: checkboxes
+    id: validation
+    attributes:
+      label: Local validation attempted
+      options:
+        - label: "I ran `python scripts/validate_questions.py` when question files were involved."
+        - label: "I ran `make ci` or the closest available local validator."
+        - label: "I confirmed the issue still happens on the latest `main`."
   - type: textarea
     id: environment
     attributes:
       label: Environment
       description: OS, Python version, provider type, and commit SHA.
+      placeholder: |
+        OS:
+        Python:
+        Provider:
+        Commit:
     validations:
-      required: false
+      required: true

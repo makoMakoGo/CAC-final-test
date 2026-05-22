@@ -1,0 +1,52 @@
+name: Runner or provider feature request
+description: Suggest an improvement to the CAC runner, providers, reporting, or automation.
+title: "[Feature]: "
+labels:
+  - enhancement
+  - needs-triage
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - runner
+        - provider
+        - judging
+        - reporting
+        - CLI or interactive mode
+        - CI or automation
+        - documentation
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What workflow is difficult or missing today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the expected behavior, CLI shape, or provider behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Mention any workaround or alternate design.
+    validations:
+      required: false
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety and compatibility
+      options:
+        - label: "This should not require committing real API keys or secrets."
+          required: true
+        - label: "This should preserve existing question bank paths and result files unless explicitly migrated."
+          required: true
