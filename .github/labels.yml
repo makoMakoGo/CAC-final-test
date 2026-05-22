@@ -1,0 +1,48 @@
+- name: question-bank
+  color: "5319e7"
+  description: Benchmark question additions, corrections, or metadata changes.
+- name: runner
+  color: "1d76db"
+  description: CAC runner, scope resolution, judging, or reporting logic.
+- name: provider
+  color: "0e8a16"
+  description: LLM provider integrations and model configuration behavior.
+- name: validation
+  color: "fbca04"
+  description: Question validation, local checks, or quality gates.
+- name: ci
+  color: "0052cc"
+  description: Continuous integration, automation, and repository tooling.
+- name: security
+  color: "d93f0b"
+  description: Security, secrets, dependency vulnerabilities, or safe handling.
+- name: category:math
+  color: "bfdadc"
+  description: Math benchmark questions.
+- name: category:code
+  color: "bfd4f2"
+  description: Code benchmark questions.
+- name: category:logic
+  color: "d4c5f9"
+  description: Natural-language and logic benchmark questions.
+- name: category:comp
+  color: "c2e0c6"
+  description: Comprehensive benchmark questions.
+- name: category:hallucination
+  color: "fef2c0"
+  description: Hallucination control and instruction-following questions.
+- name: difficulty:base
+  color: "c5def5"
+  description: Base difficulty benchmark questions.
+- name: difficulty:advanced
+  color: "f9d0c4"
+  description: Advanced difficulty benchmark questions.
+- name: difficulty:final
+  color: "e99695"
+  description: Final difficulty benchmark questions.
+- name: difficulty:final+
+  color: "b60205"
+  description: Final-plus difficulty benchmark questions.
+- name: needs-triage
+  color: "ededed"
+  description: Needs maintainer review and routing.
