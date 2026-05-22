@@ -1,1 +1,0 @@
-Create a mock clock HTML/CSS that displays synchronized time with both analog clock (with CSS-animated second hand) and digital display. The analog clock must include numbers. Keep the design responsive and use a white background. Return only HTML/CSS code, without markdown formatting.

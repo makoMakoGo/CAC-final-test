@@ -9,5 +9,5 @@ scoring_std:
   max_score: 10
   indicators:
     - accuracy       # 是否正确识别无法直接计算
-    - caution        # 是否表现出谨慎态度
-    - boundary       # 是否明确知识边界
+    - logic          # 是否表现出谨慎态度
+    - format_and_constraints # 是否明确知识边界
